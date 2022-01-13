@@ -51,24 +51,44 @@
             <hr>
         </div>
         <div class="col-9 d-flex flex-column flex-shrink-0 p-3 bg-light" id="body-chats" style="height: 100vh">
-            <span class="fs-4 align-items-center link-dark text-decoration-none">Welcome!</span>
+            <span class="fs-4 align-items-center link-dark text-decoration-none">Registration</span>
             <hr>
             <form class="row g-3">
-                <div class="mb-3">
-                    <label for="loginLoginInput" class="form-label">Login</label>
-                    <input type="text" class="form-control" id="loginLoginInput" placeholder="Username">
+                <div class="row g-3">
+                    <div class="col-auto">
+                        <label for="regLoginInput" class="form-label">Login</label>
+                        <input type="text" class="form-control" id="regLoginInput" placeholder="Username">
+                    </div>
+                    <div class="col-auto">
+                        <label for="regEmailInput" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="regEmailInput" placeholder="name@example.com">
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-auto">
+                        <label for="regLoginInput" class="form-label">Login</label>
+                        <input type="text" class="form-control" id="regLoginInput" placeholder="Username">
+                    </div>
+                    <div class="col-auto">
+                        <label for="regEmailInput" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="regEmailInput" placeholder="name@example.com">
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-auto">
+                        <label for="regPassword1Input" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="regPassword1Input" placeholder="Password">
+                    </div>
+                    <div class="col-auto">
+                        <label for="regPassword2Input" class="form-label">Confirm password</label>
+                        <input type="password" class="form-control" id="regPassword2Input" placeholder="Password">
+                    </div>
                 </div>
                 <div class="mb-3">
-                    <label for="loginPasswordInput" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="loginPasswordInput" placeholder="Password">
-                </div>
-                <div class="mb-3">
-                    <button type="button" class="btn btn-primary mb-3 submit-login">Confirm identity</button>
+                    <button type="button" class="btn btn-primary mb-3 submit-registration">Confirm registration</button>
                 </div>
             </form>
-            <span class="text-danger text-decoration-none login-errors"></span>
-            <br>
-            <div>If you don't have "Login" and "Password" you can register <a href="./registraton.html" class="link-dark btn-register">here</a></div>
+            <span class="text-danger text-decoration-none update-errors"></span>
         </div>
     </div>
 </div>
