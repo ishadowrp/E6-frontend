@@ -18,19 +18,19 @@
             <hr>
             <ul class="nav nav-pills flex-column mb-auto">
                 <li>
-                    <a href="../html/login.html" class="nav-link link-dark btn-login">
+                    <a href="#Login" class="nav-link link-dark btn-login">
                         <img class="bi me-2" src="../img/box-arrow-in-left.svg" width="16" height="16">
                         Login
                     </a>
                 </li>
                 <li>
-                    <a href="#Profile" class="nav-link link-dark btn-profile">
+                    <a href="./profile.html" class="nav-link link-dark btn-profile">
                         <img class="bi me-2" src="../img/person-square.svg" width="16" height="16">
-                        Profile
+
                     </a>
                 </li>
                 <li>
-                    <a href="#Rooms" class="nav-link link-dark btn-rooms">
+                    <a href="./chats.html" class="nav-link link-dark btn-rooms">
                         <img class="bi me-2" src="../img/grid.svg" width="16" height="16">
                         Rooms
                     </a>
@@ -42,7 +42,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#Logout" class="nav-link link-dark btn-logout">
+                    <a href="./html/index.html" class="nav-link link-dark btn-logout">
                         <img class="bi me-2" src="../img/box-arrow-right.svg" width="16" height="16">
                         Logout
                     </a>
@@ -50,20 +50,20 @@
             </ul>
             <hr>
         </div>
-        <div class="col-9 d-flex flex-column flex-shrink-0 p-3 bg-light" id="body-chats" style="height: 100vh">
+        <div class="col-md-9 d-flex flex-column flex-shrink-0 p-3 bg-light" id="body-chats" style="height: 100vh">
             <span class="fs-4 align-items-center link-dark text-decoration-none">Welcome!</span>
             <hr>
             <form class="row g-3">
-                <div class="mb-3">
+                <div class="col-auto">
                     <label for="loginLoginInput" class="form-label">Login</label>
                     <input type="text" class="form-control" id="loginLoginInput" placeholder="Username">
                 </div>
-                <div class="mb-3">
+                <div class="col-auto">
                     <label for="loginPasswordInput" class="form-label">Password</label>
                     <input type="password" class="form-control" id="loginPasswordInput" placeholder="Password">
                 </div>
                 <div class="mb-3">
-                    <button type="button" class="btn btn-primary mb-3 submit-login">Confirm identity</button>
+                    <button type="button" class="btn btn-primary mb-3" id="submit-login">Confirm identity</button>
                 </div>
             </form>
             <span class="text-danger text-decoration-none login-errors"></span>

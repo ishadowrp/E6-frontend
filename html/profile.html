@@ -26,11 +26,11 @@
                 <li>
                     <a href="#Profile" class="nav-link link-dark btn-profile">
                         <img class="bi me-2" src="../img/person-square.svg" width="16" height="16">
-                        Profile
+
                     </a>
                 </li>
                 <li>
-                    <a href="#Rooms" class="nav-link link-dark btn-rooms">
+                    <a href="../html/chats.html" class="nav-link link-dark btn-rooms">
                         <img class="bi me-2" src="../img/grid.svg" width="16" height="16">
                         Rooms
                     </a>
@@ -42,7 +42,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#Logout" class="nav-link link-dark btn-logout">
+                    <a href="./html/index.html" class="nav-link link-dark btn-logout">
                         <img class="bi me-2" src="../img/box-arrow-right.svg" width="16" height="16">
                         Logout
                     </a>
@@ -50,45 +50,41 @@
             </ul>
             <hr>
         </div>
-        <div class="col-9 d-flex flex-column flex-shrink-0 p-3 bg-light" id="body-chats" style="height: 100vh">
-            <span class="fs-4 align-items-center link-dark text-decoration-none">Registration</span>
+        <div class="col-md-9 d-flex flex-column flex-shrink-0 p-3 bg-light" id="body-chats" style="height: 100vh">
+            <span class="fs-4 align-items-center link-dark text-decoration-none">Profile</span>
             <hr>
             <form class="row g-3">
                 <div class="row g-3">
                     <div class="col-auto">
-                        <label for="regLoginInput" class="form-label">Login</label>
-                        <input type="text" class="form-control" id="regLoginInput" placeholder="Username">
+                        <label for="updLoginInput" class="form-label">Login</label>
+                        <input type="text" class="form-control" id="updLoginInput" placeholder="Username">
                     </div>
                     <div class="col-auto">
-                        <label for="regEmailInput" class="form-label">Email address</label>
-                        <input type="email" class="form-control" id="regEmailInput" placeholder="name@example.com">
+                        <label for="updEmailInput" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="updEmailInput" placeholder="name@example.com">
                     </div>
                 </div>
                 <div class="row g-3">
                     <div class="col-auto">
-                        <label for="regLoginInput" class="form-label">Login</label>
-                        <input type="text" class="form-control" id="regLoginInput" placeholder="Username">
+                        <label for="updFNInput" class="form-label">First name</label>
+                        <input type="text" class="form-control" id="updFNInput" placeholder="First name">
                     </div>
                     <div class="col-auto">
-                        <label for="regEmailInput" class="form-label">Email address</label>
-                        <input type="email" class="form-control" id="regEmailInput" placeholder="name@example.com">
+                        <label for="updLNInput" class="form-label">Last name</label>
+                        <input type="text" class="form-control" id="updLNInput" placeholder="Last name">
                     </div>
                 </div>
                 <div class="row g-3">
                     <div class="col-auto">
-                        <label for="regPassword1Input" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="regPassword1Input" placeholder="Password">
+                        <button type="button" class="btn btn-primary mb-3 submit-update-user">Update information</button>
                     </div>
                     <div class="col-auto">
-                        <label for="regPassword2Input" class="form-label">Confirm password</label>
-                        <input type="password" class="form-control" id="regPassword2Input" placeholder="Password">
+                        <button type="button" class="btn btn-primary mb-3 submit-change-pass">Change password</button>
                     </div>
-                </div>
-                <div class="mb-3">
-                    <button type="button" class="btn btn-primary mb-3 submit-registration">Confirm registration</button>
                 </div>
             </form>
             <span class="text-danger text-decoration-none update-errors"></span>
+            <span class="text-success text-decoration-none update-done"></span>
         </div>
     </div>
 </div>
