@@ -18,7 +18,7 @@
             <hr>
             <ul class="nav nav-pills flex-column mb-auto">
                 <li>
-                    <a href="../html/login.html" class="nav-link link-dark btn-login">
+                    <a href="./login.html" class="nav-link link-dark btn-login">
                         <img class="bi me-2" src="../img/box-arrow-in-left.svg" width="16" height="16">
                         Login
                     </a>
@@ -30,19 +30,19 @@
                     </a>
                 </li>
                 <li>
-                    <a href="../html/chats.html" class="nav-link link-dark btn-rooms">
+                    <a href="./chats.html" class="nav-link link-dark btn-rooms">
                         <img class="bi me-2" src="../img/grid.svg" width="16" height="16">
                         Rooms
                     </a>
                 </li>
                 <li>
-                    <a href="#Users" class="nav-link link-dark btn-users">
+                    <a href="./users.html" class="nav-link link-dark btn-users">
                         <img class="bi me-2" src="../img/person-circle.svg" width="16" height="16">
                         Users
                     </a>
                 </li>
                 <li>
-                    <a href="./html/index.html" class="nav-link link-dark btn-logout">
+                    <a href="../index.html" class="nav-link link-dark btn-logout">
                         <img class="bi me-2" src="../img/box-arrow-right.svg" width="16" height="16">
                         Logout
                     </a>
@@ -53,7 +53,14 @@
         <div class="col-md-9 d-flex flex-column flex-shrink-0 p-3 bg-light" id="body-chats" style="height: 100vh">
             <span class="fs-4 align-items-center link-dark text-decoration-none">Profile</span>
             <hr>
-            <form class="row g-3">
+            <div class="row g-3">
+                <div class="row g-3">
+                    <div class="col" style = "max-width: 200px; height: 200px;">
+                        <a href="./uploadAvatar.html" style = "max-width: 200px; height: 200px;">
+                            <img src="../img/person.svg" class="rounded float-start img-thumbnail" id = "avatar-image" alt="avatar">
+                        </a>
+                    </div>
+                </div>
                 <div class="row g-3">
                     <div class="col-auto">
                         <label for="updLoginInput" class="form-label">Login</label>

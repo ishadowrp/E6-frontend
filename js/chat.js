@@ -11,6 +11,32 @@ const btnChatDelete = document.querySelector('.btn-chat-delete');
 
 reloadSideBar();
 
+if (btnChatDelete) {
+    btnChatDelete.addEventListener('click', () => {
+        let params = (new URL(document.location)).searchParams;
+        let options = {
+            // Будем использовать метод DELETE
+            method: 'DELETE',
+            headers: {
+                // Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('chatToken'),
+            },
+        }
+        // Делаем запрос за данными
+        fetch('http://127.0.0.1:8000/api/v1/chats/'+params.get("id")+'/', options)
+            .then(response => response.json())
+            .then(json => {
+                if (json.detail !== undefined) {
+                    updError(json);
+                } else {
+                    window.location.href = "./chats.html";
+                }
+            })
+            .catch((error) => console.log(error));
+    })
+}
+
 if (btnChatEdit) {
     btnChatEdit.addEventListener('click', () => {
         let title = document.getElementById('titleEditInput').value;
@@ -70,7 +96,12 @@ if (btnNewChat) {
         // Делаем запрос за данными
         fetch('http://127.0.0.1:8000/api/v1/chats/', options)
             .then(response => response.json())
-            .then(json => updateMe(json))
+            .then(json => {
+                if (json.detail !== undefined) {
+                    updError(json);
+                } else {
+                    window.location.href = "./chats.html";
+                }})
             .catch((error) => console.log(error));
 
     })
@@ -128,7 +159,7 @@ if (window.location.pathname.indexOf('profile.html') !== -1) {
             // Будем использовать метод GET
             method: 'GET',
             headers: {
-                'Accept': 'application/json',
+                'Content-Type': 'application/json',
                 'Authorization': 'Token ' + localStorage.getItem('chatToken'),
             },
         }
@@ -146,7 +177,7 @@ if (window.location.pathname.indexOf('chats.html') !== -1) {
             // Будем использовать метод GET
             method: 'GET',
             headers: {
-                'Accept': 'application/json',
+                'Content-Type': 'application/json',
                 'Authorization': 'Token ' + localStorage.getItem('chatToken'),
             },
         }
@@ -213,7 +244,7 @@ function logMeIn(json) {
         // Будем использовать метод GET
         method: 'GET',
         headers: {
-            'Accept': 'application/json',
+            'Content-Type': 'application/json',
             'Authorization': 'Token ' + json.key,
         },
     }
@@ -254,9 +285,23 @@ function updateChat(json) {
     }
 }
 
+function deleteChat(json) {
+    if (json.detail !== undefined) {
+        updError(json);
+    } else {
+        window.location.href = './chats.html';
+    }
+}
+
 function updComplete() {
     let textDone = document.querySelector('.update-done');
     let innerHTML = 'Data updated successfully!';
+    textDone.innerHTML = innerHTML;
+}
+
+function delComplete() {
+    let textDone = document.querySelector('.update-done');
+    let innerHTML = 'Chat deleted successfully!';
     textDone.innerHTML = innerHTML;
 }
 
@@ -397,6 +442,26 @@ function fillUserProfile(json) {
     email.value = json.email;
     fN.value = json.first_name;
     lN.value = json.last_name;
+    let options = {
+        // Будем использовать метод GET
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + localStorage.getItem('chatToken'),
+        },
+    }
+    // Делаем запрос за данными
+    return fetch('http://127.0.0.1:8000/api/v1/profiles/'+localStorage.getItem('ownerID')+'/', options)
+        .then(response => response.json())
+        .then(jsonPD => {
+            console.log(jsonPD);
+            if (jsonPD.avatar_photo !== undefined) {
+                console.log(jsonPD.avatar_photo);
+                let avatar = document.getElementById('avatar-image');
+                avatar.src = jsonPD.avatar_photo;
+            }
+        })
+        .catch((error) => { console.log(error) });
 }
 
 function fillChatParams(json) {
