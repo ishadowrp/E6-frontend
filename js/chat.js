@@ -1,5 +1,7 @@
 const btnNewChat = document.querySelector('.submit-newChat');
 const btnProfile = document.querySelector('.btn-profile');
+const btnRooms = document.querySelector('.btn-rooms');
+const btnUsers = document.querySelector('.btn-users');
 const btnLogin = document.getElementById('submit-login');
 const btnRegistration = document.querySelector('.submit-registration');
 const btnLogout = document.querySelector('.btn-logout');
@@ -8,8 +10,44 @@ const btnUpdateUser = document.querySelector('.submit-update-user');
 const btnChatJoin = document.querySelector('.btn-chat-join');
 const btnChatEdit = document.querySelector('.btn-chat-edit');
 const btnChatDelete = document.querySelector('.btn-chat-delete');
+const btnChangePass = document.getElementById('btn-change-pass');
 
 reloadSideBar();
+
+// window.onload = () => {
+//     localStorage.removeItem('chatToken');
+//     localStorage.removeItem('ownerID');
+//     localStorage.removeItem('username');
+// }
+
+if (btnChangePass) {
+    btnChangePass.addEventListener('click', () => {
+        let pass1 = document.getElementById('changePassword1Input');
+        let pass2 = document.getElementById('changePassword2Input');
+        let options = {
+            // Будем использовать метод POST
+            method: 'POST',
+            headers: {
+                // Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('chatToken'),
+            body: JSON.stringify({'new_password1': pass1, 'new_password2': pass2}),
+            },
+        }
+        // Делаем запрос за данными
+        fetch('http://127.0.0.1:8000/api/v1/dj-rest-auth/password/change/', options)
+            .then(response => response.json())
+            .then(json => {
+                if (json.detail !== undefined) {
+                    window.location.href = "./profile.html";
+                } else {
+                    regError(json);
+                }
+            })
+            .catch((error) => console.log(error));
+
+    })
+}
 
 if (btnChatDelete) {
     btnChatDelete.addEventListener('click', () => {
@@ -68,7 +106,7 @@ if (window.location.pathname.indexOf('chat-edit.html') !== -1) {
             // Будем использовать метод GET
             method: 'GET',
             headers: {
-                'Accept': 'application/json',
+                'Content-Type': 'application/json',
                 'Authorization': 'Token ' + localStorage.getItem('chatToken'),
             },
         }
@@ -79,6 +117,25 @@ if (window.location.pathname.indexOf('chat-edit.html') !== -1) {
             .catch((error) => { console.log(error) });
     })
 }
+
+if (window.location.pathname.indexOf('users.html') !== -1) {
+    document.addEventListener("DOMContentLoaded", () => {
+        let options = {
+            // Будем использовать метод GET
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('chatToken'),
+            },
+        }
+        // Делаем запрос за данными
+        fetch('http://127.0.0.1:8000/api/v1/users/', options)
+            .then(response => response.json())
+            .then(json => putViewUsersCards(json))
+            .catch((error) => { console.log(error) });
+    })
+}
+
 
 if (btnNewChat) {
     btnNewChat.addEventListener('click', () => {
@@ -285,23 +342,9 @@ function updateChat(json) {
     }
 }
 
-function deleteChat(json) {
-    if (json.detail !== undefined) {
-        updError(json);
-    } else {
-        window.location.href = './chats.html';
-    }
-}
-
 function updComplete() {
     let textDone = document.querySelector('.update-done');
     let innerHTML = 'Data updated successfully!';
-    textDone.innerHTML = innerHTML;
-}
-
-function delComplete() {
-    let textDone = document.querySelector('.update-done');
-    let innerHTML = 'Chat deleted successfully!';
     textDone.innerHTML = innerHTML;
 }
 
@@ -339,12 +382,13 @@ function logOutMe() {
     localStorage.removeItem('chatToken');
     localStorage.removeItem('ownerID');
     localStorage.removeItem('username');
+    reloadSideBar();
     if (window.location.indexOf('index.html') == -1) {
         window.location.href = "../index.html";
     }
     let bodyForText = document.getElementById('body-chats');
     bodyForText.innerHTML = "<span class=\"fs-4 align-items-center link-dark text-decoration-none\">Good bye!</span><hr>";
-    reloadSideBar();
+    // reloadSideBar();
 }
 
 function getUsername(user_id) {
@@ -380,11 +424,12 @@ function putViewChatCards(json) {
         // let createDate = new Date(element.date_created);
         let extBtn = "";
         if (element.owner == localStorage.getItem("ownerID")) {
-            extBtn = "<div class = \"row g-3\"><div class=\"col-auto\"><a href=\"./chat.html?id="+element.id+"\" class=\"btn btn-primary\">Join</a></div>"+
-                "<div class=\"col-auto\"><a href=\"./chat-edit.html?id="+element.id+"\" class=\"btn btn-primary\">Edit</a></div>" +
-                "<div class=\"col-auto\"><a href=\"./chat-delete.html?id="+element.id+"\" class=\"btn btn-danger\">Delete</a></div></div>";
+            extBtn = "<div class=\"btn-group btn-group-sm\" role=\"group\" aria-label=\"...\">" +
+                "<a href=\"./chat.html?id="+element.id+"\" class=\"btn btn-outline-primary\">Join</a>"+
+                "<a href=\"./chat-edit.html?id="+element.id+"\" class=\"btn btn-outline-primary\">Edit</a>" +
+                "<a href=\"./chat-delete.html?id="+element.id+"\" class=\"btn btn-outline-danger\">Delete</a></div>";
         } else {
-            extBtn = "<a href=\"./html/chat.html?"+element.id+"\" class=\"btn btn-primary\">Join</a>";
+            extBtn = "<a href=\"./html/chat.html?"+element.id+"\" class=\"btn btn-outline-primary btn-sm\">Join</a>";
         }
 
         innerHTML += "<div class=\"col\">" +
@@ -403,11 +448,81 @@ function putViewChatCards(json) {
     reloadSideBar();
 }
 
+async function putViewUsersCards(json) {
+    let bodyForText = document.getElementById('body-chats');
+    let innerHTML = "" +
+        "<div class=\"row\">" +
+            "<div class=\"col-md-8 fs-4 align-items-center link-dark text-decoration-none\">Users of chat:</div>" +
+        "</div>" +
+        "<hr>" +
+        "<div class=\"row row-cols-1 row-cols-md-3 g-4\">";
+
+    for (const element of json) {
+    // json.forEach(function(element, i, arr) {
+
+        let urlPhoto = await getUrlPhoto(element.id);
+        // let createDate = new Date(element.date_created);
+        let extBtn = "<a href=\"./html/send-privat-message.html?id="+element.id+"\" class=\"btn btn-outline-secondary btn-sm\">Send message</a>";
+        console.log(urlPhoto);
+        innerHTML += "<div class=\"col\">" +
+            "<div class=\"card mb-3\" style=\"max-width: 540px;\">" +
+                "<div class=\"row g-0\">"+
+                    "<div class=\"col-md-4\">"+
+                        "<img src=\""+(urlPhoto !== undefined? urlPhoto : "../img/person.svg")+"\" class=\"img-fluid rounded-start\" alt=\"avatar\">"+
+                    "</div>"+
+                    "<div class=\"col-md-8\">"+
+                        "<div class=\"card-body\">" +
+                            "<div class=\"card-title\">"+element.username+"</div>"+
+                                extBtn+
+                            "</div>" +
+                        "</div>" +
+                    "</div>" +
+                "</div>" +
+            "</div>";
+    }
+    innerHTML += "</div>";
+    bodyForText.innerHTML = innerHTML;
+    reloadSideBar();
+}
+
+async function getUrlPhoto(id) {
+    let options = {
+        // Будем использовать метод GET
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + localStorage.getItem('chatToken'),
+        },
+    }
+    // Делаем запрос за данными
+    let urlPhoto = await fetch('http://127.0.0.1:8000/api/v1/profiles/'+id+'/', options)
+        .then(response => response.json())
+        .then(jsonPD => {
+            if (jsonPD.avatar_photo !== undefined) {
+                return jsonPD.avatar_photo;
+            } else {
+                return undefined;
+            }
+        })
+        .catch((error) => { console.log(error) });
+
+    return urlPhoto;
+}
+
 function reloadSideBar() {
     if (localStorage.getItem('chatToken')) {
         menuLogin.style.display = 'none';
         if (btnProfile.style.getPropertyValue('display')){
             btnProfile.style.removeProperty('display');
+        }
+        if (btnRooms.style.getPropertyValue('display')){
+            btnRooms.style.removeProperty('display');
+        }
+        if (btnUsers.style.getPropertyValue('display')){
+            btnUsers.style.removeProperty('display');
+        }
+        if (btnLogout.style.getPropertyValue('display')){
+            btnLogout.style.removeProperty('display');
         }
        let username = localStorage.getItem('username');
         if (username) {
@@ -417,20 +532,15 @@ function reloadSideBar() {
         }
     } else {
         btnProfile.style.display = 'none';
+        btnRooms.style.display = 'none';
+        btnUsers.style.display = 'none';
+        btnLogout.style.display = 'none';
         if (menuLogin.style.getPropertyValue('display')){
             menuLogin.style.removeProperty('display');
         }
     }
     let sidebar = document.getElementById('sidebar');
     sidebar.style.height = "100vh";
-}
-
-function showProfileName(json) {
-    if (json.username !== undefined) {
-        if (btnProfile.innerHTML.indexOf(json.username) == -1) {
-            btnProfile.innerHTML += json.username;
-        }
-    }
 }
 
 function fillUserProfile(json) {
