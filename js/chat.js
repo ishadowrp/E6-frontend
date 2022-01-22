@@ -14,11 +14,14 @@ const btnChangePass = document.getElementById('btn-change-pass');
 
 reloadSideBar();
 
-// window.onload = () => {
-//     localStorage.removeItem('chatToken');
-//     localStorage.removeItem('ownerID');
-//     localStorage.removeItem('username');
-// }
+if (window.location.pathname.indexOf('chat.html') !== -1) {
+    document.addEventListener("DOMContentLoaded", async() => {
+        let params = (new URL(document.location)).searchParams;
+        let chatInfo = await fetchChatInfo(params.get("id"));
+        let titleChat = document.getElementById('titleChatRoom');
+        titleChat.innerHTML = "Room: "+chatInfo.title;
+    })
+}
 
 if (btnChangePass) {
     btnChangePass.addEventListener('click', () => {
@@ -48,6 +51,7 @@ if (btnChangePass) {
 
     })
 }
+
 
 if (btnChatDelete) {
     btnChatDelete.addEventListener('click', () => {
@@ -429,7 +433,7 @@ function putViewChatCards(json) {
                 "<a href=\"./chat-edit.html?id="+element.id+"\" class=\"btn btn-outline-primary\">Edit</a>" +
                 "<a href=\"./chat-delete.html?id="+element.id+"\" class=\"btn btn-outline-danger\">Delete</a></div>";
         } else {
-            extBtn = "<a href=\"./html/chat.html?"+element.id+"\" class=\"btn btn-outline-primary btn-sm\">Join</a>";
+            extBtn = "<a href=\"./chat.html?id="+element.id+"\" class=\"btn btn-outline-primary btn-sm\">Join</a>";
         }
 
         innerHTML += "<div class=\"col\">" +
@@ -463,7 +467,6 @@ async function putViewUsersCards(json) {
         let urlPhoto = await getUrlPhoto(element.id);
         // let createDate = new Date(element.date_created);
         let extBtn = "<a href=\"./html/send-privat-message.html?id="+element.id+"\" class=\"btn btn-outline-secondary btn-sm\">Send message</a>";
-        console.log(urlPhoto);
         innerHTML += "<div class=\"col\">" +
             "<div class=\"card mb-3\" style=\"max-width: 540px;\">" +
                 "<div class=\"row g-0\">"+
@@ -573,6 +576,31 @@ function fillUserProfile(json) {
         })
         .catch((error) => { console.log(error) });
 }
+
+async function fetchChatInfo(id) {
+    let options = {
+        // Будем использовать метод GET
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + localStorage.getItem('chatToken'),
+        },
+    }
+    // Делаем запрос за данными
+    let chatInfo = await fetch('http://127.0.0.1:8000/api/v1/chats/'+id+'/', options)
+        .then(response => response.json())
+        .then(jsonPD => {
+            if (jsonPD.detail == undefined) {
+                return jsonPD;
+            } else {
+                return undefined;
+            }
+        })
+        .catch((error) => { console.log(error) });
+
+    return chatInfo;
+}
+
 
 function fillChatParams(json) {
     let title = document.getElementById('titleEditInput');
