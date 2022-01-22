@@ -69,8 +69,12 @@ chatSocket.onclose = function(e) {
 document.querySelector('#chat-message-input').focus();
 document.querySelector('#chat-message-input').onkeyup = function(e) {
     if (e.keyCode === 123) {  // enter, return
-        console.log('true');
-        document.querySelector('#chat-message-submit').click();
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+        messageInputDom.value = '';
     }
 };
 
