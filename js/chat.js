@@ -20,6 +20,36 @@ if (window.location.pathname.indexOf('chat.html') !== -1) {
         let chatInfo = await fetchChatInfo(params.get("id"));
         let titleChat = document.getElementById('titleChatRoom');
         titleChat.innerHTML = "Room: "+chatInfo.title;
+
+        for (const element of chatInfo.messages) {
+
+            let urlPhoto = await getUrlPhoto(element.author_id);
+
+            if (localStorage.getItem('username') !== element.author) {
+                let innerHTML = "" +
+                    "<li class=\"chat-left\">"+
+                    "    <div class=\"chat-avatar\">"+
+                    "       <img src=\""+(urlPhoto !== undefined? urlPhoto : "https://www.bootdey.com/img/Content/avatar/avatar3.png")+"\" alt=\"Left avatar\">"+
+                    "       <div class=\"chat-name\">"+element.author+"</div>"+
+                    "    </div>"+
+                    "    <div class=\"chat-text\">"+element.content+"</div>"+
+                    "<div class=\"chat-hour\">"+element.date_posted+" <span class=\"fa fa-check-circle\"></span></div>"+
+                    "</li>";
+                document.querySelector('#chat-log').innerHTML += innerHTML;
+            } else {
+                let innerHTML = "" +
+                    "<li class=\"chat-right\">\n" +
+                    "    <div class=\"chat-hour\">"+element.date_posted+" <span class=\"fa fa-check-circle\"></span></div>\n" +
+                    "    <div class=\"chat-text\">"+element.content+"</div>\n" +
+                    "    <div class=\"chat-avatar\">\n" +
+                    "        <img src=\""+(urlPhoto !== undefined? urlPhoto : "https://www.bootdey.com/img/Content/avatar/avatar3.png")+"\" alt=\"Right avatar\">\n" +
+                    "        <div class=\"chat-name\">"+element.author+"</div>\n" +
+                    "    </div>\n" +
+                    "</li>\n";
+                document.querySelector('#chat-log').innerHTML += innerHTML;
+            }
+        }
+
     })
 }
 
@@ -465,7 +495,6 @@ async function putViewUsersCards(json) {
     // json.forEach(function(element, i, arr) {
 
         let urlPhoto = await getUrlPhoto(element.id);
-        // let createDate = new Date(element.date_created);
         let extBtn = "<a href=\"./html/send-privat-message.html?id="+element.id+"\" class=\"btn btn-outline-secondary btn-sm\">Send message</a>";
         innerHTML += "<div class=\"col\">" +
             "<div class=\"card mb-3\" style=\"max-width: 540px;\">" +
@@ -587,7 +616,7 @@ async function fetchChatInfo(id) {
         },
     }
     // Делаем запрос за данными
-    let chatInfo = await fetch('http://127.0.0.1:8000/api/v1/chats/'+id+'/', options)
+    let chatInfo = await fetch('http://127.0.0.1:8000/api/v1/chat/join/'+id+'/', options)
         .then(response => response.json())
         .then(jsonPD => {
             if (jsonPD.detail == undefined) {
@@ -600,7 +629,6 @@ async function fetchChatInfo(id) {
 
     return chatInfo;
 }
-
 
 function fillChatParams(json) {
     let title = document.getElementById('titleEditInput');

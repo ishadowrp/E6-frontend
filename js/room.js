@@ -1,4 +1,6 @@
 let params = (new URL(document.location)).searchParams;
+const btnSubmitMessage = document.getElementById("chat-message-submit");
+
 const chatToken = localStorage.getItem('chatToken');
 const endpoint = 'ws://'
     + window.location.hostname
@@ -39,25 +41,25 @@ chatSocket.onmessage = async function(e) {
     let urlPhoto = await getUrlPhoto(data.userID);
     if (localStorage.getItem('username') !== data.username) {
         let innerHTML = "" +
-            "<div class=\"direct-chat-msg\">\n" +
-            "   <div class=\"direct-chat-info clearfix\">" +
-            "       <span class=\"direct-chat-name pull-left\">"+data.username+"</span>" +
-            "       <span class=\"direct-chat-timestamp pull-right\">"+data.created+"</span>" +
-            "   </div>" +
-            "   <img class=\"direct-chat-img\" src=\""+(urlPhoto !== undefined? urlPhoto : "../img/person.svg")+"\" alt=\"message user image\">\n" +
-            "   <div class=\"direct-chat-text\">"+data.message+"</div>\n" +
-            "</div>\n";
+        "<li class=\"chat-left\">"+
+        "    <div class=\"chat-avatar\">"+
+        "       <img src=\""+(urlPhoto !== undefined? urlPhoto : "https://www.bootdey.com/img/Content/avatar/avatar3.png")+"\" alt=\"Left avatar\">"+
+        "       <div class=\"chat-name\">"+data.username+"</div>"+
+        "    </div>"+
+        "    <div class=\"chat-text\">"+data.message+"</div>"+
+        "<div class=\"chat-hour\">"+data.created+" <span class=\"fa fa-check-circle\"></span></div>"+
+        "</li>";
         document.querySelector('#chat-log').innerHTML += innerHTML;
     } else {
         let innerHTML = "" +
-            "<div class=\"direct-chat-msg right\">\n" +
-            "    <div class=\"direct-chat-info clearfix\"> " +
-            "        <span class=\"direct-chat-name pull-right\">"+data.username+"</span> " +
-            "        <span class=\"direct-chat-timestamp pull-left\">"+data.created+"</span> " +
-            "    </div> " +
-            "    <img class=\"direct-chat-img\" src=\""+(urlPhoto !== undefined? urlPhoto : "../img/person.svg")+"\" alt=\"message user image\">\n" +
-            "    <div class=\"direct-chat-text\">"+data.message+"</div>\n" +
-            "</div>\n";
+        "<li class=\"chat-right\">\n" +
+        "    <div class=\"chat-hour\">"+data.created+" <span class=\"fa fa-check-circle\"></span></div>\n" +
+        "    <div class=\"chat-text\">"+data.message+"</div>\n" +
+        "    <div class=\"chat-avatar\">\n" +
+        "        <img src=\""+(urlPhoto !== undefined? urlPhoto : "https://www.bootdey.com/img/Content/avatar/avatar3.png")+"\" alt=\"Right avatar\">\n" +
+        "        <div class=\"chat-name\">"+data.username+"</div>\n" +
+        "    </div>\n" +
+        "</li>\n";
         document.querySelector('#chat-log').innerHTML += innerHTML;
     }
 };
@@ -66,23 +68,11 @@ chatSocket.onclose = function(e) {
     console.error('Chat socket closed unexpectedly');
 };
 
-document.querySelector('#chat-message-input').focus();
-document.querySelector('#chat-message-input').onkeyup = function(e) {
-    if (e.keyCode === 123) {  // enter, return
-        const messageInputDom = document.querySelector('#chat-message-input');
-        const message = messageInputDom.value;
-        chatSocket.send(JSON.stringify({
-            'message': message
-        }));
-        messageInputDom.value = '';
-    }
-};
-
-document.querySelector('#chat-message-submit').onclick = function(e) {
+btnSubmitMessage.addEventListener('click', () => {
     const messageInputDom = document.querySelector('#chat-message-input');
     const message = messageInputDom.value;
     chatSocket.send(JSON.stringify({
         'message': message
     }));
     messageInputDom.value = '';
-};
+})

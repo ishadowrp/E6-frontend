@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <title>Chat</title>
     <link rel="stylesheet" href="../css/bootstrap.css">
-    <link rel="stylesheet" href="../css/rooms.css">
+    <link rel="stylesheet" href="../css/rooms-new.css">
     <!--    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/sidebars/">-->
 
 </head>
@@ -56,25 +56,20 @@
         <div class="col-md-9 d-flex flex-column flex-shrink-0 p-3 bg-light" id="body-chats" style="height: 100vh">
             <span class="fs-4 align-items-center link-dark text-decoration-none" id="titleChatRoom"></span>
             <hr>
-            <div class="page-content page-container" id="page-content">
-                <div class="col-md-12 box">
-                    <div class="box box-warning direct-chat direct-chat-warning flex-column">
-                        <div class="box-body flex-column">
-                            <div class="direct-chat-messages flex-column mb-auto" id="chat-log">
-                            </div>
+            <div class="chat-container" style="height:85%">
+                <ul class="chat-box chatContainerScroll" id="chat-log" style="height:90%">
+                </ul>
+                <div class="box-footer">
+                    <form action="#" method="post">
+                        <div class="input-group">
+<!--                            <input type="text" name="message" placeholder="Type Message ..." class="form-control" id="chat-message-input">-->
+                            <textarea class="form-control" rows="3" placeholder="Type your message here..." id="chat-message-input"></textarea>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-warning btn-flat" id="chat-message-submit">Send</button>
+                            </span>
                         </div>
-                    </div>
+                    </form>
                 </div>
-            </div>
-            <div class="box-footer">
-                <form action="#" method="post">
-                    <div class="input-group">
-                        <input type="text" name="message" placeholder="Type Message ..." class="form-control" id="chat-message-input">
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-warning btn-flat" id="chat-message-submit">Send</button>
-                        </span>
-                    </div>
-                </form>
             </div>
             <hr>
         </div>
