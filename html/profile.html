@@ -12,38 +12,38 @@
         <div class="row">
             <div class="col-3 d-flex flex-column flex-shrink-0 p-3 bg-light" id="sidebar" style="width: 280px; height: 100vh">
                 <a href="../index.html" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-                    <img src="../img/cartoon-witch.svg" width="40" height="32">
+                    <img src="../img/cartoon-witch.svg" width="40" height="32" alt="logo">
                     <span class="fs-4">iShadow Chat</span>
                 </a>
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li>
                         <a href="./login.html" class="nav-link link-dark btn-login">
-                            <img class="bi me-2" src="../img/box-arrow-in-left.svg" width="16" height="16">
+                            <img class="bi me-2" src="../img/box-arrow-in-left.svg" width="16" height="16" alt="login">
                             Login
                         </a>
                     </li>
                     <li>
                         <a href="#Profile" class="nav-link link-dark btn-profile">
-                            <img class="bi me-2" src="../img/person-square.svg" width="16" height="16">
+                            <img class="bi me-2" src="../img/person-square.svg" width="16" height="16" alt="profile">
 
                         </a>
                     </li>
                     <li>
                         <a href="./chats.html" class="nav-link link-dark btn-rooms">
-                            <img class="bi me-2" src="../img/grid.svg" width="16" height="16">
+                            <img class="bi me-2" src="../img/grid.svg" width="16" height="16" alt="rooms">
                             Rooms
                         </a>
                     </li>
                     <li>
                         <a href="./users.html" class="nav-link link-dark btn-users">
-                            <img class="bi me-2" src="../img/person-circle.svg" width="16" height="16">
+                            <img class="bi me-2" src="../img/person-circle.svg" width="16" height="16" alt="users">
                             Users
                         </a>
                     </li>
                     <li>
                         <a href="../index.html" class="nav-link link-dark btn-logout">
-                            <img class="bi me-2" src="../img/box-arrow-right.svg" width="16" height="16">
+                            <img class="bi me-2" src="../img/box-arrow-right.svg" width="16" height="16" alt="logout">
                             Logout
                         </a>
                     </li>
@@ -62,13 +62,19 @@
                                 </div>
                             </div>
                             <div class="row g-3 justify-content-center">
-                                <a href="#upload" class="col-auto" id="uploadPhoto">
-                                    <img class="bi me-2" src="../img/upload.svg"  width="16" height="16">
+                                <a href="#upload" class="col-auto" id="upload-photo">
+                                    <img class="bi me-2" src="../img/upload.svg"  width="16" height="16" alt="upload">
                                 </a>
-                                <a href="#upload" class="col-auto" id="deletePhoto">
-                                    <img class="bi me-2" src="../img/trash-fill.svg"  width="16" height="16">
+                                <a href="#delete" class="col-auto" id="delete-photo">
+                                    <img class="bi me-2" src="../img/trash-fill.svg"  width="16" height="16" alt="delete">
                                 </a>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row g-3" id="group-upload">
+                        <div class="input-group">
+                            <input type="file" class="form-control" id="inputUploadFile" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                            <button class="btn btn-outline-secondary" type="button" id="submitFileUpload">Upload</button>
                         </div>
                     </div>
                     <div class="row g-3">
@@ -99,15 +105,15 @@
                             <a href="./change-password.html" class="btn btn-primary mb-3">Change password</a>
                         </div>
                     </div>
-                </form>
-                <span class="text-danger text-decoration-none update-errors"></span>
-                <span class="text-success text-decoration-none update-done"></span>
-            </div>
+                    <span class="text-danger text-decoration-none update-errors"></span>
+                    <span class="text-success text-decoration-none update-done"></span>
+                </div>
                 <hr>
+            </div>
         </div>
     </div>
-<script src="../js/bootstrap.bundle.js"></script>
-<script src="../js/sidebars.js"></script>
-<script src="../js/chat.js"></script>
+    <script src="../js/bootstrap.bundle.js"></script>
+    <script src="../js/sidebars.js"></script>
+    <script src="../js/chat.js"></script>
 </body>
 </html>

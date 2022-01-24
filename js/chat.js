@@ -7,10 +7,12 @@ const btnRegistration = document.querySelector('.submit-registration');
 const btnLogout = document.querySelector('.btn-logout');
 const menuLogin = document.querySelector('.btn-login');
 const btnUpdateUser = document.querySelector('.submit-update-user');
-const btnChatJoin = document.querySelector('.btn-chat-join');
 const btnChatEdit = document.querySelector('.btn-chat-edit');
 const btnChatDelete = document.querySelector('.btn-chat-delete');
 const btnChangePass = document.getElementById('btn-change-pass');
+const btnUploadPhoto = document.getElementById('upload-photo');
+const btnDeletePhoto = document.getElementById('delete-photo');
+const btnUpload = document.querySelector('#submitFileUpload');
 
 reloadSideBar();
 
@@ -50,6 +52,108 @@ if (window.location.pathname.indexOf('chat.html') !== -1) {
             }
         }
 
+    })
+}
+
+if (window.location.pathname.indexOf('chat.html') !== -1) {
+    document.addEventListener("DOMContentLoaded", async() => {
+        let params = (new URL(document.location)).searchParams;
+        let chatInfo = await fetchChatInfo(params.get("id"));
+        let titleChat = document.getElementById('titleChatRoom');
+        titleChat.innerHTML = "Room: "+chatInfo.title;
+
+        for (const element of chatInfo.messages) {
+
+            let urlPhoto = await getUrlPhoto(element.author_id);
+
+            if (localStorage.getItem('username') !== element.author) {
+                let innerHTML = "" +
+                    "<li class=\"chat-left\">"+
+                    "    <div class=\"chat-avatar\">"+
+                    "       <img src=\""+(urlPhoto !== undefined? urlPhoto : "https://www.bootdey.com/img/Content/avatar/avatar3.png")+"\" alt=\"Left avatar\">"+
+                    "       <div class=\"chat-name\">"+element.author+"</div>"+
+                    "    </div>"+
+                    "    <div class=\"chat-text\">"+element.content+"</div>"+
+                    "<div class=\"chat-hour\">"+element.date_posted+" <span class=\"fa fa-check-circle\"></span></div>"+
+                    "</li>";
+                document.querySelector('#chat-log').innerHTML += innerHTML;
+            } else {
+                let innerHTML = "" +
+                    "<li class=\"chat-right\">\n" +
+                    "    <div class=\"chat-hour\">"+element.date_posted+" <span class=\"fa fa-check-circle\"></span></div>\n" +
+                    "    <div class=\"chat-text\">"+element.content+"</div>\n" +
+                    "    <div class=\"chat-avatar\">\n" +
+                    "        <img src=\""+(urlPhoto !== undefined? urlPhoto : "https://www.bootdey.com/img/Content/avatar/avatar3.png")+"\" alt=\"Right avatar\">\n" +
+                    "        <div class=\"chat-name\">"+element.author+"</div>\n" +
+                    "    </div>\n" +
+                    "</li>\n";
+                document.querySelector('#chat-log').innerHTML += innerHTML;
+            }
+        }
+
+    })
+}
+
+if (btnUploadPhoto) {
+    btnUploadPhoto.addEventListener('click', () => {
+        const nodeUploadFile = document.getElementById('group-upload');
+        if (nodeUploadFile.style.getPropertyValue('display')){
+            nodeUploadFile.style.removeProperty('display');
+        }
+    })
+}
+
+if (btnDeletePhoto) {
+    btnDeletePhoto.addEventListener('click', () => {
+        let options = {
+            // Будем использовать метод DELETE
+            method: 'DELETE',
+            headers: {
+                // Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('chatToken'),
+            },
+        }
+        // Делаем запрос за данными
+        fetch('http://127.0.0.1:8000/api/v1/profiles/'+localStorage.getItem("ownerID")+'/', options)
+            .then(response => {
+                console.log(response);
+                if (response.status==204) {
+                    window.location.reload();
+                    nodeUploadFile.style.display = 'none';
+                }
+            })
+            .catch((error) => console.log(error));
+
+    })
+}
+
+if (btnUpload) {
+    btnUpload.addEventListener('click', () => {
+        const formfiledata = document.getElementById('inputUploadFile');
+        const file = formfiledata.files[0];
+        const nodeUploadFile = document.getElementById('group-upload');
+        const myHeaders = new Headers();
+        myHeaders.append("Authorization", "Token "+localStorage.getItem('chatToken'));
+
+        const formdata = new FormData();
+        formdata.append("owner", localStorage.getItem('ownerID'));
+        formdata.append("avatar_photo", file);
+
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        fetch("http://127.0.0.1:8000/api/v1/profile/upload/", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                window.location.reload();
+                nodeUploadFile.style.display = 'none';
+            })
+            .catch(error => console.log('error', error));
     })
 }
 
@@ -246,6 +350,8 @@ if (btnUpdateUser) {
 
 if (window.location.pathname.indexOf('profile.html') !== -1) {
     document.addEventListener("DOMContentLoaded", () => {
+        let nodeUploadFile = document.getElementById('group-upload');
+        nodeUploadFile.style.display = 'none';
         let options = {
             // Будем использовать метод GET
             method: 'GET',
@@ -596,9 +702,7 @@ function fillUserProfile(json) {
     return fetch('http://127.0.0.1:8000/api/v1/profiles/'+localStorage.getItem('ownerID')+'/', options)
         .then(response => response.json())
         .then(jsonPD => {
-            console.log(jsonPD);
-            if (jsonPD.avatar_photo !== undefined) {
-                console.log(jsonPD.avatar_photo);
+             if (jsonPD.avatar_photo !== undefined) {
                 let avatar = document.getElementById('avatar-image');
                 avatar.src = jsonPD.avatar_photo;
             }
