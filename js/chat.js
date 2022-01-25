@@ -51,46 +51,7 @@ if (window.location.pathname.indexOf('chat.html') !== -1) {
                 document.querySelector('#chat-log').innerHTML += innerHTML;
             }
         }
-
-    })
-}
-
-if (window.location.pathname.indexOf('chat.html') !== -1) {
-    document.addEventListener("DOMContentLoaded", async() => {
-        let params = (new URL(document.location)).searchParams;
-        let chatInfo = await fetchChatInfo(params.get("id"));
-        let titleChat = document.getElementById('titleChatRoom');
-        titleChat.innerHTML = "Room: "+chatInfo.title;
-
-        for (const element of chatInfo.messages) {
-
-            let urlPhoto = await getUrlPhoto(element.author_id);
-
-            if (localStorage.getItem('username') !== element.author) {
-                let innerHTML = "" +
-                    "<li class=\"chat-left\">"+
-                    "    <div class=\"chat-avatar\">"+
-                    "       <img src=\""+(urlPhoto !== undefined? urlPhoto : "https://www.bootdey.com/img/Content/avatar/avatar3.png")+"\" alt=\"Left avatar\">"+
-                    "       <div class=\"chat-name\">"+element.author+"</div>"+
-                    "    </div>"+
-                    "    <div class=\"chat-text\">"+element.content+"</div>"+
-                    "<div class=\"chat-hour\">"+element.date_posted+" <span class=\"fa fa-check-circle\"></span></div>"+
-                    "</li>";
-                document.querySelector('#chat-log').innerHTML += innerHTML;
-            } else {
-                let innerHTML = "" +
-                    "<li class=\"chat-right\">\n" +
-                    "    <div class=\"chat-hour\">"+element.date_posted+" <span class=\"fa fa-check-circle\"></span></div>\n" +
-                    "    <div class=\"chat-text\">"+element.content+"</div>\n" +
-                    "    <div class=\"chat-avatar\">\n" +
-                    "        <img src=\""+(urlPhoto !== undefined? urlPhoto : "https://www.bootdey.com/img/Content/avatar/avatar3.png")+"\" alt=\"Right avatar\">\n" +
-                    "        <div class=\"chat-name\">"+element.author+"</div>\n" +
-                    "    </div>\n" +
-                    "</li>\n";
-                document.querySelector('#chat-log').innerHTML += innerHTML;
-            }
-        }
-
+        document.querySelector('#chat-log').scrollTo(0, document.querySelector('#chat-log').scrollHeight);
     })
 }
 
@@ -210,6 +171,7 @@ if (btnChatDelete) {
                 }
             })
             .catch((error) => console.log(error));
+        window.location.href = "./chats.html";
     })
 }
 
@@ -286,17 +248,20 @@ if (btnNewChat) {
                  'Content-Type': 'application/json',
                 'Authorization': 'Token ' + localStorage.getItem('chatToken'),
             },
-            body: JSON.stringify({'title': title, 'description': description}),
+            body: JSON.stringify({'title': title, 'description': description, 'privat': false}),
         }
         // Делаем запрос за данными
         fetch('http://127.0.0.1:8000/api/v1/chats/', options)
-            .then(response => response.json())
-            .then(json => {
-                if (json.detail !== undefined) {
-                    updError(json);
-                } else {
+            .then(response => {
+                if (response.status === 201) {
                     window.location.href = "./chats.html";
-                }})
+                } else {
+                    return response.json();
+                }
+            })
+            .then(json => {
+                    updError(json);
+                })
             .catch((error) => console.log(error));
 
     })
@@ -531,25 +496,6 @@ function logOutMe() {
     // reloadSideBar();
 }
 
-function getUsername(user_id) {
-    let options = {
-        // Будем использовать метод GET
-        method: 'GET',
-        // mode: 'no-cors',
-        headers: {
-            'Accept': 'application/json',
-            'Authorization': 'Token ' + localStorage.getItem('chatToken'),
-        },
-    }
-    // Делаем запрос за данными
-    return fetch('http://127.0.0.1:8000/api/v1/users/'+user_id+"/", options)
-        .then(response => response.json())
-        .then(json => {
-            return json.username;
-        })
-        .catch((error) => { console.log(error) });
-}
-
 function putViewChatCards(json) {
     let bodyForText = document.getElementById('body-chats');
     let innerHTML = "<div class=\"row\">" +
@@ -559,7 +505,8 @@ function putViewChatCards(json) {
             "</div>" +
         "</div>" +
         "<hr>" +
-        "<div class=\"row row-cols-1 row-cols-md-3 g-4\">";
+        "<div style=\"height: 87%\">"+
+        "<div class=\"row row-cols-1 row-cols-md-3 g-4 chat-list\" style=\"overflow: auto;\">";
     json.forEach(function(element, i, arr) {
         // let createDate = new Date(element.date_created);
         let extBtn = "";
@@ -583,7 +530,7 @@ function putViewChatCards(json) {
             "</div>" +
             "</div>";
     })
-    innerHTML += "</div>";
+    innerHTML += "</div></div><hr>";
     bodyForText.innerHTML = innerHTML;
     reloadSideBar();
 }
