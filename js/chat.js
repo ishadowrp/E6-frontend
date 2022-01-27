@@ -385,7 +385,7 @@ if (window.location.pathname.indexOf('new-privateChat.html') !== -1) {
         let chatID = await createPrivateChat();
         localStorage.removeItem('userID');
         localStorage.removeItem('users');
-        window.location.href = "./chat.html/?id="+chatID;
+        window.location.href = "./chat.html?id="+chatID;
     })
 }
 
@@ -665,7 +665,7 @@ function putViewPrivateChatsCards(json) {
     let innerHTML = "<div class=\"row\">" +
         "<div class=\"col-md-8 fs-4 align-items-center link-dark text-decoration-none\">Chats to connect:</div>" +
         "<div class=\"col-md-4\">" +
-        "<a href=\"./new-privateChat.html\" class=\"btn btn-private-success\">+ New chat</a>"+
+        "<a href=\"./new-privateChat.html\" class=\"btn btn-success\">+ New chat</a>"+
         "</div>" +
         "</div>" +
         "<hr>" +
