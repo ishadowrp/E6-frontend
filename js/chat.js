@@ -13,6 +13,7 @@ const btnChangePass = document.getElementById('btn-change-pass');
 const btnUploadPhoto = document.getElementById('upload-photo');
 const btnDeletePhoto = document.getElementById('delete-photo');
 const btnUpload = document.querySelector('#submitFileUpload');
+const inputUserlist = document.getElementById('UserList');
 
 reloadSideBar();
 
@@ -52,6 +53,32 @@ if (window.location.pathname.indexOf('chat.html') !== -1) {
             }
         }
         document.querySelector('#chat-log').scrollTo(0, document.querySelector('#chat-log').scrollHeight);
+        if (chatInfo.chat_users.find(user => user.id == (localStorage.getItem('ownerID'))) == undefined) {
+            chatInfo.chat_users.push(localStorage.getItem('ownerID'));
+
+            let options = {
+                // Будем использовать метод PATCH
+                method: 'PATCH',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + localStorage.getItem('chatToken'),
+                    'body': JSON.stringify({
+                        "chat_users": chatInfo.chat_users
+                    })
+                },
+            }
+            // Делаем запрос за данными
+            fetch('http://127.0.0.1:8000/api/v1/chats/'+params.get("id")+'/', options)
+                .then(response => {
+                    console.log(response);
+                    if (response.status!==200) {
+                        console.log(response.json());
+                    }
+                })
+                .catch((error) => console.log(error));
+
+        }
     })
 }
 
@@ -248,7 +275,7 @@ if (btnNewChat) {
                  'Content-Type': 'application/json',
                 'Authorization': 'Token ' + localStorage.getItem('chatToken'),
             },
-            body: JSON.stringify({'title': title, 'description': description, 'privat': false}),
+            body: JSON.stringify({'title': title, 'description': description, 'private': false}),
         }
         // Делаем запрос за данными
         fetch('http://127.0.0.1:8000/api/v1/chats/', options)
@@ -333,6 +360,35 @@ if (window.location.pathname.indexOf('profile.html') !== -1) {
     })
 }
 
+if (window.location.pathname.indexOf('new-privateChat.html') !== -1) {
+    document.addEventListener("DOMContentLoaded", async() => {
+        let userlistOptions = document.getElementById('UserlistOptions');
+        userList = await getUserList();
+        innerHTML = "";
+        userList.forEach((user) => {
+            if (user.id !== Number(localStorage.getItem('ownerID'))) {
+                innerHTML += "<option value=\""+user.username+"\">";
+            }
+        })
+        userlistOptions.innerHTML = innerHTML;
+        localStorage.setItem('users', JSON.stringify(userList));
+    })
+    inputUserlist.addEventListener('change', () => {
+        let titleText = document.getElementById('titleInput');
+        let users = JSON.parse(localStorage.getItem('users'));
+        let userID = users.find(user => user.username === inputUserlist.value).id;
+        titleText.value = localStorage.getItem('username')+'-'+inputUserlist.value;
+        localStorage.setItem('userID', userID);
+    })
+    let dtnCreateJoinChat = document.querySelector('.submit-new-privateChat');
+    dtnCreateJoinChat.addEventListener('click', async() => {
+        let chatID = await createPrivateChat();
+        localStorage.removeItem('userID');
+        localStorage.removeItem('users');
+        window.location.href = "./chat.html/?id="+chatID;
+    })
+}
+
 if (window.location.pathname.indexOf('chats.html') !== -1) {
     document.addEventListener("DOMContentLoaded", () => {
         let options = {
@@ -347,6 +403,26 @@ if (window.location.pathname.indexOf('chats.html') !== -1) {
         fetch('http://127.0.0.1:8000/api/v1/chats/', options)
             .then(response => response.json())
             .then(json => putViewChatCards(json))
+            .catch((error) => {
+                console.log(error)
+            });
+    });
+}
+
+if (window.location.pathname.indexOf('private-messages.html') !== -1) {
+    document.addEventListener("DOMContentLoaded", () => {
+        let options = {
+            // Будем использовать метод GET
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('chatToken'),
+            },
+        }
+        // Делаем запрос за данными
+        fetch('http://127.0.0.1:8000/api/v1/chats/', options)
+            .then(response => response.json())
+            .then(json => putViewPrivateChatsCards(json))
             .catch((error) => {
                 console.log(error)
             });
@@ -391,6 +467,53 @@ btnLogout.addEventListener('click', () => {
         .then(json => logOutMe())
         .catch((error) => console.log(error));
 });
+
+async function createPrivateChat() {
+    let title = document.getElementById('titleInput').value;
+    let description = document.getElementById('descriptionInput').value;
+    let members = [localStorage.getItem('ownerID'), localStorage.getItem('userID')];
+    let options = {
+        // Будем использовать метод POST
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + localStorage.getItem('chatToken'),
+        },
+        body: JSON.stringify({'title': title, 'chat_users': members, 'description': description, 'private': true}),
+    }
+    // Делаем запрос за данными
+    let chat = await fetch('http://127.0.0.1:8000/api/v1/chats/', options)
+        .then(response => response.json())
+        .then(json => {
+            return json
+        })
+        .catch((error) => console.log(error));
+    return chat.id;
+}
+
+async function getUserList() {
+    let options = {
+        // Будем использовать метод GET
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + localStorage.getItem('chatToken'),
+        },
+    }
+    // Делаем запрос за данными
+    return await fetch('http://127.0.0.1:8000/api/v1/users/', options)
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                return undefined;
+            }
+        })
+        .then(jsonPD => {
+                return jsonPD;
+        })
+        .catch((error) => { console.log(error) });
+}
 
 function getLogMeIn(json) {
     if (json.key !== undefined) {
@@ -509,26 +632,69 @@ function putViewChatCards(json) {
         "<div class=\"row row-cols-1 row-cols-md-3 g-4 chat-list\" style=\"overflow: auto;\">";
     json.forEach(function(element, i, arr) {
         // let createDate = new Date(element.date_created);
-        let extBtn = "";
-        if (element.owner == localStorage.getItem("ownerID")) {
-            extBtn = "<div class=\"btn-group btn-group-sm\" role=\"group\" aria-label=\"...\">" +
-                "<a href=\"./chat.html?id="+element.id+"\" class=\"btn btn-outline-primary\">Join</a>"+
-                "<a href=\"./chat-edit.html?id="+element.id+"\" class=\"btn btn-outline-primary\">Edit</a>" +
-                "<a href=\"./chat-delete.html?id="+element.id+"\" class=\"btn btn-outline-danger\">Delete</a></div>";
-        } else {
-            extBtn = "<a href=\"./chat.html?id="+element.id+"\" class=\"btn btn-outline-primary btn-sm\">Join</a>";
-        }
+        if (element.private === false) {
+            let extBtn = "";
+            if (element.owner == localStorage.getItem("ownerID")) {
+                extBtn = "<div class=\"btn-group btn-group-sm\" role=\"group\" aria-label=\"...\">" +
+                    "<a href=\"./chat.html?id="+element.id+"\" class=\"btn btn-outline-primary\">Join</a>"+
+                    "<a href=\"./chat-edit.html?id="+element.id+"\" class=\"btn btn-outline-primary\">Edit</a>" +
+                    "<a href=\"./chat-delete.html?id="+element.id+"\" class=\"btn btn-outline-danger\">Delete</a></div>";
+            } else {
+                extBtn = "<a href=\"./chat.html?id="+element.id+"\" class=\"btn btn-outline-primary btn-sm\">Join</a>";
+            }
 
-        innerHTML += "<div class=\"col\">" +
-            "<div class=\"card\">" +
-            "<div class=\"card-body\">" +
-            "<h5 class=\"card-title\">"+element.title+"</h5>" +
-            "<h6 class=\"card-subtitle text-muted\">users: "+element.chat_users.length+"</h6>" +
-            "<p class=\"card-text\">"+element.description+"</p>" +
-            extBtn +
-            "</div>" +
-            "</div>" +
-            "</div>";
+            innerHTML += "<div class=\"col\">" +
+                "<div class=\"card\">" +
+                "<div class=\"card-body\">" +
+                "<h5 class=\"card-title\">"+element.title+"</h5>" +
+                "<h6 class=\"card-subtitle text-muted\">users: "+element.chat_users.length+"</h6>" +
+                "<p class=\"card-text\">"+element.description+"</p>" +
+                extBtn +
+                "</div>" +
+                "</div>" +
+                "</div>";
+        }
+    })
+    innerHTML += "</div></div><hr>";
+    bodyForText.innerHTML = innerHTML;
+    reloadSideBar();
+}
+
+function putViewPrivateChatsCards(json) {
+    let bodyForText = document.getElementById('body-chats');
+    let innerHTML = "<div class=\"row\">" +
+        "<div class=\"col-md-8 fs-4 align-items-center link-dark text-decoration-none\">Chats to connect:</div>" +
+        "<div class=\"col-md-4\">" +
+        "<a href=\"./new-privateChat.html\" class=\"btn btn-private-success\">+ New chat</a>"+
+        "</div>" +
+        "</div>" +
+        "<hr>" +
+        "<div style=\"height: 87%\">"+
+        "<div class=\"row row-cols-1 row-cols-md-3 g-4 chat-list\" style=\"overflow: auto;\">";
+    json.forEach(function(element, i, arr) {
+        if (element.private && element.chat_users.find(user => user == localStorage.getItem('ownerID')) !== undefined){
+            // let createDate = new Date(element.date_created);
+            let extBtn = "";
+            if (element.owner == localStorage.getItem("ownerID")) {
+                extBtn = "<div class=\"btn-group btn-group-sm\" role=\"group\" aria-label=\"...\">" +
+                    "<a href=\"./chat.html?id="+element.id+"\" class=\"btn btn-outline-primary\">Join</a>"+
+                    "<a href=\"./chat-edit.html?id="+element.id+"\" class=\"btn btn-outline-primary\">Edit</a>" +
+                    "<a href=\"./chat-delete.html?id="+element.id+"\" class=\"btn btn-outline-danger\">Delete</a></div>";
+            } else {
+                extBtn = "<a href=\"./chat.html?id="+element.id+"\" class=\"btn btn-outline-primary btn-sm\">Join</a>";
+            }
+
+            innerHTML += "<div class=\"col\">" +
+                "<div class=\"card\">" +
+                "<div class=\"card-body\">" +
+                "<h5 class=\"card-title\">"+element.title+"</h5>" +
+                "<h6 class=\"card-subtitle text-muted\">users: "+element.chat_users.length+"</h6>" +
+                "<p class=\"card-text\">"+element.description+"</p>" +
+                extBtn +
+                "</div>" +
+                "</div>" +
+                "</div>";
+        }
     })
     innerHTML += "</div></div><hr>";
     bodyForText.innerHTML = innerHTML;
@@ -542,7 +708,8 @@ async function putViewUsersCards(json) {
             "<div class=\"col-md-8 fs-4 align-items-center link-dark text-decoration-none\">Users of chat:</div>" +
         "</div>" +
         "<hr>" +
-        "<div class=\"row row-cols-1 row-cols-md-3 g-4\">";
+        "<div style=\"height:87%\">"+
+        "<div class=\"row row-cols-1 row-cols-md-3 g-4\" style=\"overflow:auto\">";
 
     for (const element of json) {
     // json.forEach(function(element, i, arr) {
@@ -565,7 +732,7 @@ async function putViewUsersCards(json) {
                 "</div>" +
             "</div>";
     }
-    innerHTML += "</div>";
+    innerHTML += "</div></div><hr>";
     bodyForText.innerHTML = innerHTML;
     reloadSideBar();
 }

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>Chat</title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-3 d-flex flex-column flex-shrink-0 p-3 bg-light" id="sidebar" style="width: 280px; height: 100vh">
+            <a href="../index.html" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+                <img src="../img/cartoon-witch.svg" width="40" height="32">
+                <span class="fs-4">iShadow Chat</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li>
+                    <a href="./login.html" class="nav-link link-dark btn-login">
+                        <img class="bi me-2" src="../img/box-arrow-in-left.svg" width="16" height="16">
+                        Login
+                    </a>
+                </li>
+                <li>
+                    <a href="./profile.html" class="nav-link link-dark btn-profile">
+                        <img class="bi me-2" src="../img/person-square.svg" width="16" height="16">
+
+                    </a>
+                </li>
+                <li>
+                    <a href="./chats.html" class="nav-link link-dark btn-rooms">
+                        <img class="bi me-2" src="../img/grid.svg" width="16" height="16">
+                        Rooms
+                    </a>
+                </li>
+                <li>
+                    <a href="./users.html" class="nav-link link-dark btn-users">
+                        <img class="bi me-2" src="../img/person-circle.svg" width="16" height="16">
+                        Users
+                    </a>
+                </li>
+                <li>
+                    <a href="../index.html" class="nav-link link-dark btn-logout">
+                        <img class="bi me-2" src="../img/box-arrow-right.svg" width="16" height="16">
+                        Logout
+                    </a>
+                </li>
+            </ul>
+            <hr>
+        </div>
+        <div class="col-md-9 d-flex flex-column flex-shrink-0 p-3 bg-light" id="body-chats" style="height: 100vh">
+            <span class="fs-4 align-items-center link-dark text-decoration-none">Create new private chat</span>
+            <hr>
+            <form class="row g-3">
+                <div class="col-auto">
+                    <label for="UserList" class="form-label">User</label>
+                    <input class="form-control" list="UserlistOptions" id="UserList" placeholder="Type to search...">
+                    <datalist id="UserlistOptions">
+                    </datalist>
+                </div>
+                <div class="col-auto">
+                    <label for="titleInput" class="form-label">Title</label>
+                    <input type="text" readonly class="form-control" id="titleInput" placeholder="Title">
+                </div>
+                <div class="mb-3">
+                    <label for="descriptionInput" class="form-label">Description</label>
+                    <input type="text" class="form-control" id="descriptionInput" placeholder="Description">
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-success mb-3 submit-new-privateChat">Create & Join</button>
+                </div>
+                <div class="col-auto">
+                    <a href="./chats.html" class="btn btn-danger mb-3">Cancel</a>
+                </div>
+            </form>
+            <span class="text-danger text-decoration-none update-errors"></span>
+            <span class="text-success text-decoration-none update-done"></span>
+        </div>
+    </div>
+</div>
+<script src="../js/bootstrap.bundle.js"></script>
+<script src="../js/sidebars.js"></script>
+<script src="../js/chat.js"></script>
+</body>
+</html>
