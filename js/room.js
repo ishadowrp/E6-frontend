@@ -62,9 +62,10 @@ chatSocket.onmessage = async function(e) {
         "</li>\n";
         document.querySelector('#chat-log').innerHTML += innerHTML;
     }
+    document.querySelector('#chat-log').scrollTo(0, document.querySelector('#chat-log').scrollHeight);
 };
 
-chatSocket.onclose = function(e) {
+chatSocket.onclose = function() {
     console.error('Chat socket closed unexpectedly');
 };
 
